@@ -1,0 +1,38 @@
+{
+  "model": "random_forest_crash_classifier",
+  "label": {
+    "horizon_days": 20,
+    "drawdown_threshold": 0.15
+  },
+  "validation": {
+    "scheme": "walk_forward",
+    "purge_days": 20,
+    "oos_auc": 0.574
+  },
+  "top_features": [
+    "dist_ma200",
+    "ret_60d",
+    "vol_30d",
+    "vol_10d",
+    "max_pairwise_corr",
+    "ret_20d"
+  ],
+  "p_crash_to_exposure": [
+    {
+      "p_below": 0.2,
+      "exposure": 1.0
+    },
+    {
+      "p_below": 0.4,
+      "exposure": 0.65
+    },
+    {
+      "p_below": 0.65,
+      "exposure": 0.3
+    },
+    {
+      "p_below": 1.01,
+      "exposure": 0.0
+    }
+  ]
+}

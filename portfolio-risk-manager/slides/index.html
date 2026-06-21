@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Portfolio Risk Manager — BNB HACK Track 2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" />
+<style>
+  :root {
+    --gold:   #f0b429;
+    --green:  #34d399;
+    --red:    #f87171;
+    --blue:   #60a5fa;
+    --purple: #a78bfa;
+    --dim:    #6b7280;
+    --bg:     #0d0d0d;
+    --card:   #1a1a1a;
+    --border: #2d2d2d;
+  }
+
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { text-align: left; }
+
+  /* ── typography ── */
+  .reveal h1 { font-size: 2.4em; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .reveal h2 { font-size: 1.6em; font-weight: 700; color: var(--gold); margin-bottom: 0.5em; }
+  .reveal h3 { font-size: 1.1em; font-weight: 600; color: var(--blue); margin-bottom: 0.3em; }
+  .reveal p, .reveal li { font-size: 0.82em; line-height: 1.55; }
+  .reveal strong { color: var(--gold); }
+  .reveal em { color: var(--green); font-style: normal; font-weight: 600; }
+
+  /* ── tag / badge ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.6em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  .tag-gold   { background: rgba(240,180,41,0.15);  color: var(--gold);   border: 1px solid rgba(240,180,41,0.4);  }
+  .tag-green  { background: rgba(52,211,153,0.15);  color: var(--green);  border: 1px solid rgba(52,211,153,0.4);  }
+  .tag-blue   { background: rgba(96,165,250,0.15);  color: var(--blue);   border: 1px solid rgba(96,165,250,0.4);  }
+  .tag-purple { background: rgba(167,139,250,0.15); color: var(--purple); border: 1px solid rgba(167,139,250,0.4); }
+  .tag-red    { background: rgba(248,113,113,0.15); color: var(--red);    border: 1px solid rgba(248,113,113,0.4); }
+
+  /* ── card ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .card-grid { display: grid; gap: 12px; }
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  /* ── metric block ── */
+  .metric { text-align: center; padding: 14px 10px; }
+  .metric .val { font-size: 2em; font-weight: 800; line-height: 1; }
+  .metric .lbl { font-size: 0.6em; color: var(--dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .metric .delta { font-size: 0.65em; margin-top: 4px; }
+  .up   { color: var(--green); }
+  .down { color: var(--red); }
+
+  /* ── table ── */
+  .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+  .reveal table th { background: #111; color: var(--gold); padding: 8px 12px; border-bottom: 1px solid var(--border); font-weight: 700; }
+  .reveal table td { padding: 7px 12px; border-bottom: 1px solid #1f1f1f; }
+  .reveal table tr:last-child td { border-bottom: none; }
+  .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* ── code block ── */
+  .reveal pre { box-shadow: none; background: #111; border: 1px solid var(--border); border-radius: 8px; }
+  .reveal pre code { font-size: 0.75em; line-height: 1.45; max-height: none; }
+  .reveal code { background: #111; color: var(--green); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+
+  /* ── flow diagram ── */
+  .flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 0.75em; }
+  .flow-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 12px;
+    text-align: center;
+    min-width: 90px;
+  }
+  .flow-arr { color: var(--dim); font-size: 1.2em; }
+  .flow-box.hi-gold   { border-color: var(--gold);   color: var(--gold); }
+  .flow-box.hi-green  { border-color: var(--green);  color: var(--green); }
+  .flow-box.hi-blue   { border-color: var(--blue);   color: var(--blue); }
+  .flow-box.hi-purple { border-color: var(--purple); color: var(--purple); }
+
+  /* ── regime chips ── */
+  .regime-row { display: flex; gap: 10px; margin: 8px 0; }
+  .regime-chip { flex: 1; padding: 10px 8px; border-radius: 8px; text-align: center; font-size: 0.68em; font-weight: 700; }
+  .r-on   { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.4); color: var(--green); }
+  .r-neu  { background: rgba(240,180,41,0.12); border: 1px solid rgba(240,180,41,0.4);  color: var(--gold); }
+  .r-off  { background: rgba(248,113,113,0.12);border: 1px solid rgba(248,113,113,0.4);color: var(--red); }
+  .r-cri  { background: rgba(107,114,128,0.12);border: 1px solid rgba(107,114,128,0.4);color: var(--dim); }
+  .regime-chip .exp { font-size: 1.4em; margin-top: 4px; }
+
+  /* ── bar chart ── */
+  .bar-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 0.7em; }
+  .bar-label { width: 130px; color: var(--dim); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 14px; background: #1f1f1f; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .bar-val { width: 50px; }
+
+  /* ── title slide specific ── */
+  .title-label { font-size: 0.65em; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4em; }
+  .title-badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.2em; }
+
+  /* ── divider ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+  /* ── list ── */
+  .reveal ul { list-style: none; padding: 0; margin: 0; }
+  .reveal ul li { padding: 5px 0 5px 18px; position: relative; }
+  .reveal ul li::before { content: "›"; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+  /* ── highlight box ── */
+  .highlight-box { background: rgba(240,180,41,0.06); border-left: 3px solid var(--gold); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 10px 0; font-size: 0.78em; }
+
+  /* ── two-col ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: start; }
+
+  /* ── footer ── */
+  .slide-footer { position: absolute; bottom: 14px; right: 20px; font-size: 0.5em; color: var(--dim); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <div class="title-label">BNB HACK: AI Trading Agent Edition — Track 2 · Strategy Skills</div>
+  <h1>Portfolio<br><span style="color:var(--gold)">Risk Manager</span></h1>
+  <p style="color:var(--dim);font-size:0.9em;margin-top:0.2em;">
+    A CoinMarketCap Strategy Skill that turns live market data<br>
+    into a <strong>backtestable portfolio-level risk spec</strong>.
+  </p>
+  <div class="title-badge-row">
+    <span class="tag tag-gold">CMC Agent Hub</span>
+    <span class="tag tag-green">9 MCP Tools</span>
+    <span class="tag tag-blue">Pure Python · No deps</span>
+    <span class="tag tag-purple">ML · Walk-Forward</span>
+    <span class="tag tag-gold">MCP + x402 + CLI</span>
+  </div>
+  <div class="slide-footer">portfolio-risk-manager / SKILL.md</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 2 — PROBLEM
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>The problem most strategy builders skip</h2>
+  <div class="highlight-box">
+    <strong>Most crypto strategies don't die from bad entries — they die from position sizing and drawdowns.</strong>
+  </div>
+  <div class="card-grid card-grid-3" style="margin-top:18px">
+    <div class="card">
+      <div style="font-size:1.8em;margin-bottom:6px">⚡</div>
+      <h3>Over-sized positions</h3>
+      <p>Good signal, wrong size — one drawdown wipes the account before the edge compounds.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:1.8em;margin-bottom:6px">📉</div>
+      <h3>No regime awareness</h3>
+      <p>Holding full exposure through a bear market turns a 30% correction into a −70% account.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:1.8em;margin-bottom:6px">🔗</div>
+      <h3>Hidden correlation</h3>
+      <p>Owning 6 DeFi tokens looks diversified — until they all crash together in a liquidation cascade.</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:18px;border-left-color:var(--green)">
+    The track's example builds are <strong>entry-signal generators</strong>. This skill is the missing complement —
+    the <em>risk overlay</em> that sits on top of any of them.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 3 — WHAT IT IS
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>What this skill does</h2>
+  <p style="margin-bottom:14px">Takes an asset universe (and optionally an entry signal) → answers 4 questions in order:</p>
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h3>① Regime</h3>
+      <p>Is the market <em>risk-on</em>, <em>neutral</em>, <em>risk-off</em>, or in <em>crisis</em>?<br>
+      Sets the overall <strong>risk budget</strong> (max gross exposure).</p>
+    </div>
+    <div class="card">
+      <h3>② Sizing</h3>
+      <p>Split the risk budget via <strong>inverse-volatility</strong> weighting so each asset contributes equal risk,
+      then scale to a chosen portfolio vol target.</p>
+    </div>
+    <div class="card">
+      <h3>③ Limits</h3>
+      <p><strong>Per-asset cap</strong> (25%) + <strong>correlation cluster</strong> down-weighting +
+      asset trend filter (drop names below 50d MA).</p>
+    </div>
+    <div class="card">
+      <h3>④ Protection</h3>
+      <p><strong>Drawdown throttle ladder</strong> → <strong>kill-switch to cash</strong> → cooldown re-entry.
+      Asymmetric smoothing: cut instantly, re-risk gradually.</p>
+    </div>
+  </div>
+  <div style="margin-top:16px" class="flow">
+    <div class="flow-box hi-blue">CMC live data<br><small style="color:var(--dim)">9 MCP tools</small></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box hi-gold">Regime<br><small style="color:var(--dim)">trend-led</small></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">Sizing<br><small style="color:var(--dim)">inv-vol</small></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">Limits<br><small style="color:var(--dim)">corr/cap</small></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box hi-green">risk_spec.json<br><small style="color:var(--dim)">backtestable</small></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box hi-purple">backtest.py<br><small style="color:var(--dim)">proof</small></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 4 — CMC AGENT HUB DATA
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Built on CMC Agent Hub — 9 MCP tools</h2>
+  <table>
+    <thead>
+      <tr><th>CMC MCP Tool</th><th>Controls</th><th>Route</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>get_crypto_marketcap_technical_analysis</code></td><td>Regime budget — trend vs 200d MA, RSI <strong>(primary)</strong></td><td>MCP</td></tr>
+      <tr><td><code>get_global_crypto_derivatives_metrics</code></td><td>Funding rate + OI — trim regime one notch</td><td>MCP</td></tr>
+      <tr><td><code>get_global_metrics_latest</code></td><td>Fear &amp; Greed, dominance, ETF flows — trim at extremes</td><td>MCP</td></tr>
+      <tr><td><code>get_crypto_technical_analysis</code></td><td>Per-asset ATR, MA, RSI → inv-vol sizing + trend filter</td><td>MCP</td></tr>
+      <tr><td><code>get_crypto_quotes_latest</code></td><td>24h volume → liquidity floor; recent return proxy</td><td>MCP</td></tr>
+      <tr><td><code>get_crypto_metrics</code></td><td>Whale concentration → idiosyncratic risk flags</td><td>MCP</td></tr>
+      <tr><td><code>get_upcoming_macro_events</code></td><td>Event risk window — cut exposure around catalysts</td><td>MCP</td></tr>
+      <tr><td><code>trending_crypto_narratives</code></td><td>Narrative clusters → correlation prior</td><td>MCP</td></tr>
+      <tr><td><code>search_cryptos</code></td><td>Resolve symbols → CMC IDs (universe onboarding)</td><td>MCP</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:14px" class="flow">
+    <div class="flow-box hi-blue"><strong>MCP</strong><br><small style="color:var(--dim)">default<br>mcp.coinmarketcap.com</small></div>
+    <div class="flow-arr">·</div>
+    <div class="flow-box hi-purple"><strong>x402</strong><br><small style="color:var(--dim)">keyless<br>0.01 USDC / call</small></div>
+    <div class="flow-arr">·</div>
+    <div class="flow-box hi-green"><strong>CLI / REST</strong><br><small style="color:var(--dim)">history pull<br>for backtests</small></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 5 — REGIME CLASSIFICATION
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Trend-led regime classification</h2>
+  <div class="two-col" style="gap:22px">
+    <div>
+      <p style="margin-bottom:10px"><strong>Principle:</strong> trend sets the base; sentiment/leverage only <em>trim</em> it (never raise it).</p>
+      <div class="card" style="margin-bottom:10px">
+        <h3>① Trend (primary)</h3>
+        <p>Total market-cap vs ~200d MA + RSI<br>
+        &ge;1.00 → <em>risk_on</em> (or <em>neutral</em> if RSI &ge;75)<br>
+        &ge;0.90 → <em>risk_off</em> &nbsp;·&nbsp; &lt;0.90 → <em>crisis</em></p>
+      </div>
+      <div class="card">
+        <h3>② Trims (step-down only)</h3>
+        <p>Funding &gt;5% <strong>and</strong> OI surge &gt;20% → −1 step<br>
+        Fear &amp; Greed &ge;90 (extreme euphoria) → −1 step</p>
+      </div>
+      <div class="highlight-box" style="margin-top:10px">
+        Why trend-first? Sentiment-first exited healthy uptrends and left Sharpe on the table.
+        Trend-first keeps the book invested when prices are rising.
+      </div>
+    </div>
+    <div>
+      <div class="regime-row">
+        <div class="regime-chip r-on">RISK ON<div class="exp">100%</div><small>exposure</small></div>
+        <div class="regime-chip r-neu">NEUTRAL<div class="exp">65%</div><small>exposure</small></div>
+      </div>
+      <div class="regime-row">
+        <div class="regime-chip r-off">RISK OFF<div class="exp">30%</div><small>exposure</small></div>
+        <div class="regime-chip r-cri">CRISIS<div class="exp">0%</div><small>cash</small></div>
+      </div>
+      <div class="card" style="margin-top:12px;font-size:0.68em;font-family:monospace;line-height:1.6">
+        <div style="color:var(--dim)"># trend-led classifier (excerpt)</div>
+        <div><span style="color:var(--blue)">if</span> ratio &ge; 1.00:</div>
+        <div>&nbsp;&nbsp;base = <span style="color:var(--green)">"risk_on"</span> <span style="color:var(--blue)">if</span> rsi &lt; 75 <span style="color:var(--blue)">else</span> <span style="color:var(--green)">"neutral"</span></div>
+        <div><span style="color:var(--blue)">elif</span> ratio &ge; 0.90: base = <span style="color:var(--green)">"risk_off"</span></div>
+        <div><span style="color:var(--blue)">else</span>: base = <span style="color:var(--green)">"crisis"</span></div>
+        <div style="color:var(--dim)"># trims (never raise)</div>
+        <div><span style="color:var(--blue)">if</span> funding &gt; 0.05 <span style="color:var(--blue)">and</span> oi &gt; 20: step_down(base)</div>
+        <div><span style="color:var(--blue)">if</span> fng &ge; 90: step_down(base)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 6 — RESULTS
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Backtest results</h2>
+  <p style="margin-bottom:10px;font-size:0.75em;color:var(--dim)">Synthetic bull → crash → recovery path · equal-weight buy &amp; hold vs the risk overlay</p>
+  <div class="card-grid card-grid-4" style="margin-bottom:16px">
+    <div class="card metric">
+      <div class="val up">1.13</div>
+      <div class="lbl">Sharpe (overlay)</div>
+      <div class="delta up">↑ from 0.66</div>
+    </div>
+    <div class="card metric">
+      <div class="val up">12%</div>
+      <div class="lbl">Max Drawdown</div>
+      <div class="delta up">↓ from 69%</div>
+    </div>
+    <div class="card metric">
+      <div class="val up">1.85</div>
+      <div class="lbl">Calmar</div>
+      <div class="delta up">↑ from 0.35</div>
+    </div>
+    <div class="card metric">
+      <div class="val up">20%</div>
+      <div class="lbl">Ann. vol (realized)</div>
+      <div class="delta up">↓ from 65%</div>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Metric</th><th>Buy &amp; Hold (equal-weight)</th><th style="color:var(--green)">Risk Overlay</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Total return</td><td>37.9%</td><td><em>35.5%</em></td></tr>
+      <tr><td>Annualized vol</td><td class="down">64.7%</td><td class="up">19.9%</td></tr>
+      <tr><td>Sharpe</td><td class="down">0.66</td><td class="up"><strong>1.13</strong></td></tr>
+      <tr><td>Max drawdown</td><td class="down">69.2%</td><td class="up"><strong>12.3%</strong></td></tr>
+      <tr><td>Calmar</td><td class="down">0.35</td><td class="up"><strong>1.85</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="highlight-box" style="margin-top:10px">
+    Nearly matching upside (35.5% vs 37.9%) while taking a <strong>fraction of the risk</strong>. That's the risk overlay doing its job.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 7 — MONTE CARLO
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Monte Carlo robustness — 200 paths</h2>
+  <div class="highlight-box">
+    One good Sharpe on one path could be curve-fit. <strong>200 randomized paths</strong> with jittered crash timing prove the gain is structural.
+  </div>
+  <div class="card-grid card-grid-3" style="margin:14px 0">
+    <div class="card metric">
+      <div class="val up">1.30</div>
+      <div class="lbl">Mean Sharpe (overlay)</div>
+      <div class="delta up">↑ from 0.84</div>
+    </div>
+    <div class="card metric">
+      <div class="val up">66%</div>
+      <div class="lbl">Paths where<br>overlay beats B&amp;H</div>
+    </div>
+    <div class="card metric">
+      <div class="val up">57pp</div>
+      <div class="lbl">Mean drawdown<br>reduction</div>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Metric (mean across 200 paths)</th><th>Buy &amp; Hold</th><th style="color:var(--green)">Risk Overlay</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Sharpe</td><td>0.84</td><td class="up"><strong>1.30</strong></td></tr>
+      <tr><td>Max drawdown</td><td class="down">72.9%</td><td class="up"><strong>15.6%</strong></td></tr>
+      <tr><td>Calmar</td><td>1.18</td><td class="up"><strong>1.88</strong></td></tr>
+    </tbody>
+  </table>
+  <pre><code class="language-bash">python backtest.py --mc 200   # run it yourself in &lt;2 s, no install</code></pre>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 8 — ML LAYER
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Optional ML layer — pure stdlib, no install</h2>
+  <p style="margin-bottom:12px;font-size:0.75em">Two complementary models, both validated <strong>out-of-sample, zero leakage</strong> (walk-forward + purge gap).</p>
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <span class="tag tag-purple" style="margin-bottom:8px;display:inline-block">ml/ml_regime.py</span>
+        <h3>Random Forest crash classifier</h3>
+        <p>From scratch (CART + bagging + Gini, random feature subsets).
+        16 features from CMC signals (no lookahead).
+        Label: forward 20d drawdown &ge;15%.
+        Distilled to human-readable depth-3 tree.</p>
+        <hr class="divider">
+        <p><strong>OOS AUC 0.574</strong> — modest, honest. (AUC 0.95 would be leakage.)
+        On the multi-regime stress-test tape: ML overlay Sharpe <em>0.42</em> vs rules −0.41.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <span class="tag tag-blue" style="margin-bottom:8px;display:inline-block">ml/vol_forecast.py</span>
+        <h3>ATR-based Ridge vol forecaster</h3>
+        <p>Own Gaussian-elimination normal equations solver. 8 features: ATR%, vol 10/30d, vol ratio, ATR expansion, RSI dist, market vol.
+        Target: forward 10d annualized realized vol.</p>
+        <hr class="divider">
+        <p><strong>OOS R² 0.094</strong> — the only forecaster with R² &gt; 0.
+        Trailing 30d vol R² = −0.28. EWMA R² = −0.17.
+        Payoff: tighter vol control + lower DD (Sharpe flat — that's correct behavior for a vol model).</p>
+      </div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:10px">
+    Key design choice: <strong>walk-forward with purge gap</strong>, never random k-fold.
+    k-fold leaks future into past on time series — reports fantasy accuracy.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 9 — FEATURE IMPORTANCE
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>ML internals — what the models learned</h2>
+  <div class="two-col">
+    <div>
+      <h3>Crash classifier — feature importance (Gini, OOS)</h3>
+      <div class="bar-row"><span class="bar-label">dist_ma200</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--purple)"></div></div><span class="bar-val up">15.7%</span></div>
+      <div class="bar-row"><span class="bar-label">ret_60d</span><div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--purple)"></div></div><span class="bar-val up">10.5%</span></div>
+      <div class="bar-row"><span class="bar-label">vol_30d</span><div class="bar-track"><div class="bar-fill" style="width:57%;background:var(--purple)"></div></div><span class="bar-val">9.0%</span></div>
+      <div class="bar-row"><span class="bar-label">vol_10d</span><div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--purple)"></div></div><span class="bar-val">8.4%</span></div>
+      <div class="bar-row"><span class="bar-label">max_pairwise_corr</span><div class="bar-track"><div class="bar-fill" style="width:51%;background:var(--purple)"></div></div><span class="bar-val">8.0%</span></div>
+      <div class="highlight-box" style="margin-top:12px;font-size:0.72em">
+        Distilled rule: near all-time highs + rising vol ratio + <strong>correlation spike</strong> (&gt;0.87)
+        → p(crash) = 0.54. Textbook pre-crash fingerprint.
+      </div>
+    </div>
+    <div>
+      <h3>Vol forecaster — feature influence</h3>
+      <div class="bar-row"><span class="bar-label">index_rv_30d</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--blue)"></div></div><span class="bar-val up">21%</span></div>
+      <div class="bar-row"><span class="bar-label">rv_10d</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--blue)"></div></div><span class="bar-val up">19%</span></div>
+      <div class="bar-row"><span class="bar-label">rv_30d</span><div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--blue)"></div></div><span class="bar-val">18%</span></div>
+      <div class="bar-row"><span class="bar-label">vol_ratio</span><div class="bar-track"><div class="bar-fill" style="width:81%;background:var(--blue)"></div></div><span class="bar-val">17%</span></div>
+      <div class="bar-row"><span class="bar-label">atr_expansion</span><div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--blue)"></div></div><span class="bar-val">14%</span></div>
+      <div class="bar-row"><span class="bar-label">atr_pct</span><div class="bar-track"><div class="bar-fill" style="width:33%;background:var(--blue)"></div></div><span class="bar-val">7%</span></div>
+      <div class="highlight-box" style="margin-top:12px;font-size:0.72em">
+        ATR contributes but doesn't dominate — honest result. Market vol + realized vol carry the leading signal.
+        ATR expansion is the incremental edge.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 10 — AGENT HUB COVERAGE
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Full Agent Hub coverage</h2>
+  <p style="margin-bottom:14px;font-size:0.78em">All three CMC AI Agent Hub routes are documented and used — targeting the <strong>"Best Use of Agent Hub"</strong> bonus.</p>
+  <div class="card-grid card-grid-3">
+    <div class="card">
+      <div style="font-size:1.6em;margin-bottom:6px">🔗</div>
+      <h3>MCP (default)</h3>
+      <p>9 declared tools in <code>SKILL.md</code> — the primary runtime path. Works in any MCP-compatible agent (Claude, etc.).</p>
+      <pre style="margin-top:10px"><code style="font-size:0.7em">mcp.coinmarketcap.com/mcp
+X-CMC-MCP-API-KEY: &lt;key&gt;</code></pre>
+    </div>
+    <div class="card">
+      <div style="font-size:1.6em;margin-bottom:6px">💳</div>
+      <h3>x402 (keyless)</h3>
+      <p>Pay-per-request on Base L2. <strong>0.01 USDC / call.</strong> Zero API key setup — send HTTP + USDC micropayment header.</p>
+      <pre style="margin-top:10px"><code style="font-size:0.7em">X-Payment: &lt;base64 USDC
+           payment proof&gt;</code></pre>
+    </div>
+    <div class="card">
+      <div style="font-size:1.6em;margin-bottom:6px">⌨️</div>
+      <h3>CLI / REST</h3>
+      <p>Used for <strong>historical data</strong> in backtesting. Same endpoints, bearer token. Documented in <code>references/data-access.md</code>.</p>
+      <pre style="margin-top:10px"><code style="font-size:0.7em">pro-api.coinmarketcap.com
+X-CMC_PRO_API_KEY: &lt;key&gt;</code></pre>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px">
+    Same spec is built regardless of route — all three paths feed identical fields to <code>portfolio_risk_spec.json</code>.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 11 — THE SPEC
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>The deliverable — <code>portfolio_risk_spec.json</code></h2>
+  <div class="two-col" style="gap:16px">
+    <div>
+      <p style="font-size:0.78em;margin-bottom:10px">A single, self-contained JSON document. Any backtester needs only this + a price series.</p>
+      <pre><code class="language-json" style="font-size:0.62em">{
+  "spec_version": "1.0",
+  "universe": ["ETH","LINK","UNI","AAVE","CAKE","AVAX"],
+  "regime": {
+    "method": "trend_led",
+    "exposure_by_regime": {
+      "risk_on": 1.00, "neutral": 0.65,
+      "risk_off": 0.30, "crisis": 0.00
+    }
+  },
+  "sizing": {
+    "method": "inverse_vol",
+    "target_portfolio_vol_annual": 0.40,
+    "max_vol_scalar": 2.0,
+    "trend_filter": { "enabled": true, "ma_days": 50 }
+  },
+  "execution": {
+    "smoothing_mode": "asymmetric_fast_down",
+    "exposure_smoothing_span_days": 5
+  },
+  "drawdown_control": {
+    "throttle": [
+      { "dd_gte": 0.10, "exposure_mult": 0.50 },
+      { "dd_gte": 0.15, "exposure_mult": 0.25 }
+    ],
+    "kill_switch_dd": 0.25,
+    "reentry": { "cooldown_days": 3, "recover_to_dd_lte": 0.08 }
+  }
+}</code></pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <h3>Validated by JSON Schema</h3>
+        <p><code>schema/portfolio_risk_spec.schema.json</code> (draft-07) formally validates every field — a backtester can reject a malformed spec before running.</p>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <h3>Deterministic &amp; reproducible</h3>
+        <p>Same inputs → same spec → same backtest result. No randomness in the spec itself.</p>
+      </div>
+      <div class="card">
+        <h3>Strategy-agnostic</h3>
+        <p>Wraps any entry signal or basket. The spec doesn't know — or care — how the assets were selected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 12 — RUN IT
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Run it now — pure stdlib, zero install</h2>
+  <pre><code class="language-bash"># 1. single canonical path (bull → crash → recovery, ~0.1 s)
+cd portfolio-risk-manager/backtest
+python backtest.py --spec ../examples/sample_risk_spec.json
+
+# 2. Monte Carlo robustness — 200 jittered paths (~1.5 s)
+python backtest.py --mc 200
+
+# 3. ML regime classifier (from-scratch Random Forest)
+cd ../ml
+python ml_regime.py
+
+# 4. ATR-based Ridge volatility forecaster
+python vol_forecast.py</code></pre>
+  <div class="card-grid card-grid-3" style="margin-top:16px">
+    <div class="card">
+      <h3>backtest.py</h3>
+      <p>550 lines · pure stdlib · synthetic canonical path + Monte Carlo mode · A/B vs buy &amp; hold</p>
+    </div>
+    <div class="card">
+      <h3>ml_regime.py</h3>
+      <p>300 lines · from-scratch CART + RF + AUC · walk-forward + purge · distilled rules</p>
+    </div>
+    <div class="card">
+      <h3>vol_forecast.py</h3>
+      <p>270 lines · own Gaussian solver · ATR Ridge · rotation backtest · walk-forward</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 13 — FILE LAYOUT
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Project layout</h2>
+  <div class="two-col" style="gap:20px">
+    <div>
+      <pre><code style="font-size:0.65em">portfolio-risk-manager/
+  SKILL.md                      ← CMC Skill (the submission)
+  schema/
+    portfolio_risk_spec.schema.json
+  examples/
+    sample_risk_spec.json       ← complete valid spec
+  references/
+    regime-detection.md
+    exposure-and-limits.md
+    drawdown-control.md
+    spec-format.md
+    cmc-data-map.md
+    data-access.md              ← MCP / x402 / CLI
+  backtest/
+    backtest.py                 ← canonical + MC backtester
+    README.md
+  ml/
+    ml_regime.py                ← Random Forest classifier
+    vol_forecast.py             ← ATR Ridge forecaster
+    exposure_rules.json         ← distilled ML artifact
+    vol_forecast_model.json     ← validated model artifact
+    README.md</code></pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <h3>Track 2 submission</h3>
+        <p>No on-chain registration required. Submit <code>SKILL.md</code> + the spec folder via <strong>DoraHacks</strong>. (On-chain steps apply to Track 1 only.)</p>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <h3>References</h3>
+        <p>6 focused reference docs explain every design decision — judges can read the "why" without reading the code.</p>
+      </div>
+      <div class="card">
+        <h3>Artifacts</h3>
+        <p>Two JSON model artifacts (<code>exposure_rules.json</code>, <code>vol_forecast_model.json</code>) ready to embed in the spec.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 14 — SUMMARY
+═══════════════════════════════════════════════════════════════ -->
+<section>
+  <h2>Summary</h2>
+  <div class="card-grid card-grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <h3>Differentiated angle</h3>
+      <p>All track examples are entry-signal generators. This is the <strong>risk overlay</strong> that completes the stack — portfolio-level, not single-asset, strategy-agnostic.</p>
+    </div>
+    <div class="card">
+      <h3>Proven results</h3>
+      <p>Sharpe <strong>0.66 → 1.13</strong> · Max DD <strong>69% → 12%</strong> · Calmar <strong>0.35 → 1.85</strong>. Robust across 200 Monte Carlo paths (66% win rate).</p>
+    </div>
+    <div class="card">
+      <h3>Full Agent Hub coverage</h3>
+      <p>9 CMC MCP tools + documented x402 + CLI routes. Built to target the <strong>"Best Use of Agent Hub"</strong> bonus.</p>
+    </div>
+    <div class="card">
+      <h3>Honest ML</h3>
+      <p>Walk-forward + purge validation. OOS AUC 0.57 (real signal, not leaked). The only vol forecaster with R² &gt; 0. Pure stdlib — zero install.</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="text-align:center;padding:16px 20px">
+    <span style="font-size:1.1em"><strong>portfolio-risk-manager</strong></span><br>
+    <span style="color:var(--dim);font-size:0.8em">SKILL.md · backtest.py · ml_regime.py · vol_forecast.py · sample_risk_spec.json</span><br>
+    <div style="margin-top:8px">
+      <span class="tag tag-gold">MIT License</span>
+      <span class="tag tag-green">Pure Python stdlib</span>
+      <span class="tag tag-blue">CMC Agent Hub</span>
+      <span class="tag tag-purple">Track 2 — DoraHacks</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.slides -->
+</div><!-- /.reveal -->
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  backgroundTransition: 'fade',
+  controlsLayout: 'bottom-right',
+  progress: true,
+  center: false,
+  margin: 0.06,
+  width: 1280,
+  height: 720,
+  plugins: []
+});
+</script>
+</body>
+</html>

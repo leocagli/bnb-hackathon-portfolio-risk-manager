@@ -1,0 +1,74 @@
+{
+  "spec_version": "1.0",
+  "name": "BNB-ecosystem balanced risk overlay",
+  "generated_at": "2026-06-20T00:00:00Z",
+  "base_capital_usd": 10000,
+  "universe": ["ETH", "LINK", "UNI", "AAVE", "CAKE", "AVAX"],
+  "assumptions": [
+    "Backtest reads fear_greed and funding_rate from the price CSV; live skill fills regime.inputs from CMC MCP."
+  ],
+  "regime": {
+    "current": "neutral",
+    "inputs": {
+      "fear_greed": 54,
+      "funding_rate_8h": 0.008,
+      "btc_dominance": 58.2,
+      "altseason_index": 38,
+      "market_rsi": 56,
+      "trend": "above_200dma"
+    },
+    "exposure_by_regime": {
+      "risk_on": 1.0,
+      "neutral": 0.65,
+      "risk_off": 0.30,
+      "crisis": 0.0
+    }
+  },
+  "sizing": {
+    "method": "inverse_vol",
+    "target_portfolio_vol_annual": 0.40,
+    "vol_lookback_days": 30,
+    "max_vol_scalar": 2.0,
+    "max_weight_per_asset": 0.25,
+    "min_weight_per_asset": 0.0,
+    "trend_filter": { "enabled": true, "ma_days": 50 }
+  },
+  "correlation": {
+    "lookback_days": 45,
+    "max_pairwise": 0.75,
+    "penalty": "downweight_cluster"
+  },
+  "limits": {
+    "max_gross_exposure": 1.0,
+    "max_assets": 8,
+    "leverage": 1.0
+  },
+  "drawdown_control": {
+    "throttle": [
+      { "dd_gte": 0.10, "exposure_mult": 0.5 },
+      { "dd_gte": 0.15, "exposure_mult": 0.25 }
+    ],
+    "kill_switch_dd": 0.25,
+    "reentry": {
+      "cooldown_days": 3,
+      "recover_to_dd_lte": 0.08
+    }
+  },
+  "event_risk": {
+    "enabled": true,
+    "derisk_before_high_impact_event_hours": 24,
+    "exposure_mult_during_event_window": 0.5
+  },
+  "execution": {
+    "smoothing_mode": "asymmetric_fast_down",
+    "exposure_smoothing_span_days": 5
+  },
+  "idiosyncratic_flags": {
+    "max_whale_concentration": 0.30,
+    "min_24h_volume_usd": 5000000
+  },
+  "rebalance": {
+    "frequency_days": 7,
+    "drift_band": 0.05
+  }
+}

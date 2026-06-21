@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://coinmarketcap.com/skills/portfolio-risk-manager/portfolio_risk_spec.schema.json",
+  "title": "Portfolio Risk Spec",
+  "description": "Backtestable, portfolio-level risk management specification produced by the portfolio-risk-manager CMC skill.",
+  "type": "object",
+  "required": ["spec_version", "universe"],
+  "additionalProperties": false,
+  "properties": {
+    "spec_version": { "type": "string" },
+    "name": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "base_capital_usd": { "type": "number", "exclusiveMinimum": 0, "default": 10000 },
+    "universe": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "regime": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "current": { "type": "string", "enum": ["risk_on", "neutral", "risk_off", "crisis"] },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "fear_greed": { "type": "number", "minimum": 0, "maximum": 100 },
+            "funding_rate_8h": { "type": "number" },
+            "btc_dominance": { "type": "number" },
+            "altseason_index": { "type": "number" },
+            "market_rsi": { "type": "number" },
+            "trend": { "type": "string" }
+          }
+        },
+        "exposure_by_regime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["risk_on", "neutral", "risk_off", "crisis"],
+          "properties": {
+            "risk_on": { "type": "number", "minimum": 0 },
+            "neutral": { "type": "number", "minimum": 0 },
+            "risk_off": { "type": "number", "minimum": 0 },
+            "crisis": { "type": "number", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "sizing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": { "type": "string", "enum": ["equal_weight", "inverse_vol", "risk_parity_lite"] },
+        "target_portfolio_vol_annual": { "type": "number", "exclusiveMinimum": 0 },
+        "vol_lookback_days": { "type": "integer", "minimum": 2 },
+        "max_vol_scalar": { "type": "number", "exclusiveMinimum": 0 },
+        "max_weight_per_asset": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "min_weight_per_asset": { "type": "number", "minimum": 0, "maximum": 1 },
+        "trend_filter": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "ma_days": { "type": "integer", "minimum": 2 }
+          }
+        }
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lookback_days": { "type": "integer", "minimum": 2 },
+        "max_pairwise": { "type": "number", "minimum": -1, "maximum": 1 },
+        "penalty": { "type": "string", "enum": ["downweight_cluster", "cap_cluster", "none"] }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_gross_exposure": { "type": "number", "minimum": 0 },
+        "max_assets": { "type": "integer", "minimum": 1 },
+        "leverage": { "type": "number", "minimum": 0 }
+      }
+    },
+    "drawdown_control": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "throttle": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dd_gte", "exposure_mult"],
+            "properties": {
+              "dd_gte": { "type": "number", "minimum": 0, "maximum": 1 },
+              "exposure_mult": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "kill_switch_dd": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reentry": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cooldown_days": { "type": "integer", "minimum": 0 },
+            "recover_to_dd_lte": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    },
+    "event_risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "derisk_before_high_impact_event_hours": { "type": "integer", "minimum": 0 },
+        "exposure_mult_during_event_window": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "smoothing_mode": { "type": "string", "enum": ["none", "symmetric", "asymmetric_fast_down"] },
+        "exposure_smoothing_span_days": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "idiosyncratic_flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_whale_concentration": { "type": "number", "minimum": 0, "maximum": 1 },
+        "min_24h_volume_usd": { "type": "number", "minimum": 0 }
+      }
+    },
+    "rebalance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frequency_days": { "type": "integer", "minimum": 1 },
+        "drift_band": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

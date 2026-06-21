@@ -1,0 +1,26 @@
+{
+  "model": "ridge_atr_vol_forecast",
+  "target": {
+    "forward_days": 10,
+    "quantity": "annualized_realized_vol"
+  },
+  "validation": {
+    "scheme": "walk_forward",
+    "oos_r2": 0.094,
+    "rmse_vs_randomwalk": [
+      0.241,
+      0.286
+    ]
+  },
+  "features": [
+    "atr_pct",
+    "rv_10d",
+    "rv_30d",
+    "vol_ratio",
+    "atr_expansion",
+    "abs_ret_5d",
+    "rsi_dist_50",
+    "index_rv_30d"
+  ],
+  "use": "feed forecast into sizing.target_portfolio_vol scaling and inverse-vol rotation"
+}
