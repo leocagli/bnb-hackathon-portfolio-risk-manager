@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-risk-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "demo": "node demo.js"
+  },
+  "dependencies": {
+    "playwright": "^1.45.0"
+  }
+}
